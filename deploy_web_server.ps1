@@ -1,8 +1,14 @@
 $folder = "c:\temp"
 $log = "c:\temp\deploy_web_server.txt"
 $date = get-date
+$zipurl = "https://raw.githubusercontent.com/2mgdev/azure_labs/master/www.zip"
+$output = $folder+"\www.zip"
+$Destination = "C:\inetpub\wwwroot"
+
 $HttpPort=80
 $httpRule="web server access rule port 80"
+
+
 
 
 function Add-FirewallException
@@ -29,6 +35,13 @@ if (!(Test-Path $log)) {
     Install-WindowsFeature -Name Web-Mgmt-Tools >> $log
 
     Add-FirewallException -port $HttpPort
+
+    
+Invoke-WebRequest -Uri $zipurl -OutFile $output >> $log
+
+Add-Type -assembly “system.io.compression.filesystem” >> $log
+[io.compression.zipfile]::ExtractToDirectory($output, $destination) >> $log
+
 
     }
 else {
